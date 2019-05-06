@@ -19,6 +19,10 @@ func run() {
 	InitPaddle()
 
 	for !screen.Window.Closed() {
+		if !screen.Window.Focused() {
+			continue
+		}
+
 		screen.Clear()
 		paddle.Clear()
 		ball.Clear()

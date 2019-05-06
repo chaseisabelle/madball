@@ -72,14 +72,48 @@ func (b *Ball) Move() {
 	// did we hit the paddle?
 	intersect := b.Circle.IntersectRect(paddle.Rectangle)
 
-	if intersect.X != 0 || intersect.Y != 0 { //<< collision detection
+	if intersect.X != 0 || intersect.Y != 0 {
+		center = center.Add(intersect)
+		b.Velocity = intersect
+
+		if inbetween(b.Velocity.X, 0, 1) {
+			b.Velocity.X = 1
+		} else if b.Velocity.X > 5 {
+			b.Velocity.X = 5
+		} else if inbetween(b.Velocity.X, -1, 0) {
+			b.Velocity.X = -1
+		} else if b.Velocity.X < -5 {
+			b.Velocity.X = -5
+		}
+
+		if inbetween(b.Velocity.Y, 0, 1) {
+			b.Velocity.Y = 1
+		} else if b.Velocity.Y > 5 {
+			b.Velocity.Y = 5
+		} else if inbetween(b.Velocity.Y, -1, 0) {
+			b.Velocity.Y = -1
+		} else if b.Velocity.Y < -5 {
+			b.Velocity.Y = -5
+		}
+	}
+
+	// set the new center
+	b.Circle.Center = center
+}
+
+/*
+	// did we hit the paddle?
+	intersect := b.Circle.IntersectRect(paddle.Rectangle)
+
+	// collision detection
+	if intersect.X != 0 || intersect.Y != 0 {
 		// collision resolution
 		relVel := paddle.Velocity.Sub(b.Velocity)
 
 		// intersect is the "normal" ?
-		relVelAlongNorm := relVel.Normal().Dot(intersect) //intersect.X * relVel.X + intersect.Y * relVel.Y
+		relVelAlongNorm := relVel.Dot(intersect.Normal()) //intersect.X * relVel.X + intersect.Y * relVel.Y
 
-		if relVelAlongNorm < 0 {
+		if relVelAlongNorm <= 0 {
 			e := math.Min(paddle.Restitution, b.Restitution) //<< elasticity
 
 			j := -(1 + e) * relVelAlongNorm
@@ -90,14 +124,9 @@ func (b *Ball) Move() {
 			b.Velocity.X += 1 / b.Mass * impulse.X
 			b.Velocity.Y += 1 / b.Mass * impulse.Y
 		}
-
-
 	}
 
-	// set the new center
-	b.Circle.Center = center
-}
-
+ */
 
 /*
 void ResolveCollision( Object A, Object B )
