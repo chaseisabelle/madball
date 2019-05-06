@@ -15,6 +15,8 @@ type Ball struct {
 	Color       color.Color
 	Restitution float64
 	Mass        float64
+	minVel      pixel.Vec
+	maxVel      pixel.Vec
 }
 
 func InitBall() {
@@ -22,7 +24,9 @@ func InitBall() {
 
 	drawer := imdraw.New(nil)
 	circle := pixel.C(pixel.V(monW / 2, monH / 2), monW / 50)
-	velocity := pixel.V(0, -5)
+	minVel := pixel.V(1, 5)
+	maxVel := pixel.V(10, 10)
+	velocity := pixel.V(randFloat64n(minVel.X, maxVel.X), -randFloat64n(minVel.Y, maxVel.Y))
 
 	ball = &Ball{
 		Drawer:      *drawer,
@@ -31,6 +35,8 @@ func InitBall() {
 		Color:       colornames.Blue,
 		Restitution: 0,
 		Mass:        1,
+		minVel:minVel,
+		maxVel:maxVel,
 	}
 }
 
@@ -76,24 +82,34 @@ func (b *Ball) Move() {
 		center = center.Add(intersect)
 		b.Velocity = intersect
 
-		if inbetween(b.Velocity.X, 0, 1) {
-			b.Velocity.X = 1
-		} else if b.Velocity.X > 5 {
-			b.Velocity.X = 5
-		} else if inbetween(b.Velocity.X, -1, 0) {
-			b.Velocity.X = -1
-		} else if b.Velocity.X < -5 {
-			b.Velocity.X = -5
+		if imbetween(b.Velocity.X, 0, b.minVel.X) {
+			b.Velocity.X = b.minVel.X
+		} else if b.Velocity.X > b.maxVel.X {
+			b.Velocity.X = b.maxVel.X
+		} else if imbetween(b.Velocity.X, -b.minVel.X, 0) {
+			b.Velocity.X = -b.minVel.X
+		} else if b.Velocity.X < -b.maxVel.X {
+			b.Velocity.X = -b.maxVel.X
 		}
 
-		if inbetween(b.Velocity.Y, 0, 1) {
-			b.Velocity.Y = 1
-		} else if b.Velocity.Y > 5 {
-			b.Velocity.Y = 5
-		} else if inbetween(b.Velocity.Y, -1, 0) {
-			b.Velocity.Y = -1
-		} else if b.Velocity.Y < -5 {
-			b.Velocity.Y = -5
+		if imbetween(b.Velocity.Y, 0, b.minVel.Y) {
+			b.Velocity.Y = b.minVel.Y
+		} else if b.Velocity.Y > b.maxVel.Y {
+			b.Velocity.Y = b.maxVel.Y
+		} else if imbetween(b.Velocity.Y, -b.minVel.Y, 0) {
+			b.Velocity.Y = -b.minVel.Y
+		} else if b.Velocity.Y < -b.maxVel.Y {
+			b.Velocity.Y = -b.maxVel.Y
+		}
+
+		paddleCenter := paddle.Rectangle.Center()
+
+		if b.Velocity.X < 0 && b.Circle.Center.X > paddleCenter.X || b.Velocity.X > 0 && b.Circle.Center.X < paddleCenter.X {
+			b.Velocity.X = -b.Velocity.X
+		}
+
+		if b.Velocity.Y < 0 && b.Circle.Center.Y > paddleCenter.Y || b.Velocity.Y > 0 && b.Circle.Center.Y < paddleCenter.Y {
+			b.Velocity.Y = -b.Velocity.Y
 		}
 	}
 
