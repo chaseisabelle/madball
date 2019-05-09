@@ -78,10 +78,17 @@ func (b *Ball) Move() {
 	// did we hit the paddle?
 	intersect := b.Circle.IntersectRect(paddle.Rectangle)
 
+	// non-zero vector means there has been a collision
 	if intersect.X != 0 || intersect.Y != 0 {
+		// i was unable to find a suitable 2d physics engine with
+		// docs, so i've hacked this together - it's not ideal, but
+		// it works ok
 		center = center.Add(intersect)
 		b.Velocity = intersect
 
+		// based on the velocity of the paddle vs the velocity of
+		// the ball, have the ball bounce-off the paddle in the
+		// correct direction
 		if imbetween(b.Velocity.X, 0, b.minVel.X) {
 			b.Velocity.X = b.minVel.X
 		} else if b.Velocity.X > b.maxVel.X {
@@ -102,6 +109,9 @@ func (b *Ball) Move() {
 			b.Velocity.Y = -b.maxVel.Y
 		}
 
+		// the speed of the bounce is a little...unpredictable, so this
+		// piece of code just makes sure the speed is kept within a
+		// reasonable threshold
 		paddleCenter := paddle.Rectangle.Center()
 
 		if b.Velocity.X < 0 && b.Circle.Center.X > paddleCenter.X || b.Velocity.X > 0 && b.Circle.Center.X < paddleCenter.X {
