@@ -8,7 +8,6 @@ import (
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math"
-	"math/rand"
 )
 
 type Ball struct {
@@ -30,21 +29,15 @@ func InitBall() {
 	circle := pixel.C(pixel.V(monW / 2, monH / 2), monW / 50)
 	minVel := pixel.V(1, 5)
 	maxVel := pixel.V(10, 10)
-	velocity := pixel.V(randFloat64n(minVel.X, maxVel.X), -randFloat64n(minVel.Y, maxVel.Y))
-	shape := chipmunk.NewCircle(vect.Vect{
-		X: vect.Float(circle.Center.X),
-		Y: vect.Float(circle.Center.Y),
-	}, float32(circle.Radius))
+	velocity := pixel.V(randumb(minVel.X, maxVel.X), -randumb(minVel.Y, maxVel.Y))
+	shape := chipmunk.NewCircle(vector(circle.Center.X, circle.Center.Y), float32(circle.Radius))
 
 	mass := 1
 	shape.SetElasticity(0.95)
 
 	body := chipmunk.NewBody(vect.Float(mass), shape.Moment(float32(mass)))
-	body.SetPosition(vect.Vect{
-		X: vect.Float(circle.Center.X),
-		Y: vect.Float(circle.Center.Y),
-	})
-	body.SetAngle(vect.Float(rand.Float32() * 2 * math.Pi)) //<< wtf to do here?
+	body.SetPosition(vector(circle.Center.X, circle.Center.Y))
+	body.SetAngle(floater(randumb(0, 1) * 2 * math.Pi)) //<< wtf to do here?
 
 	body.AddShape(shape)
 	stuff.Space.AddBody(body)
