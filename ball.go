@@ -3,9 +3,12 @@ package main
 import (
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
+	"github.com/vova616/chipmunk"
+	"github.com/vova616/chipmunk/vect"
 	"golang.org/x/image/colornames"
 	"image/color"
 	"math"
+	"math/rand"
 )
 
 type Ball struct {
@@ -17,6 +20,7 @@ type Ball struct {
 	Mass        float64
 	minVel      pixel.Vec
 	maxVel      pixel.Vec
+	Shape *chipmunk.Shape
 }
 
 func InitBall() {
@@ -27,6 +31,23 @@ func InitBall() {
 	minVel := pixel.V(1, 5)
 	maxVel := pixel.V(10, 10)
 	velocity := pixel.V(randFloat64n(minVel.X, maxVel.X), -randFloat64n(minVel.Y, maxVel.Y))
+	shape := chipmunk.NewCircle(vect.Vect{
+		X: vect.Float(circle.Center.X),
+		Y: vect.Float(circle.Center.Y),
+	}, float32(circle.Radius))
+
+	mass := 1
+	shape.SetElasticity(0.95)
+
+	body := chipmunk.NewBody(vect.Float(mass), shape.Moment(float32(mass)))
+	body.SetPosition(vect.Vect{
+		X: vect.Float(circle.Center.X),
+		Y: vect.Float(circle.Center.Y),
+	})
+	body.SetAngle(vect.Float(rand.Float32() * 2 * math.Pi)) //<< wtf to do here?
+
+	body.AddShape(shape)
+	stuff.Space.AddBody(body)
 
 	ball = &Ball{
 		Drawer:      *drawer,
@@ -37,6 +58,7 @@ func InitBall() {
 		Mass:        1,
 		minVel:minVel,
 		maxVel:maxVel,
+		Shape:shape,
 	}
 }
 

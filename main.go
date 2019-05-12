@@ -6,6 +6,7 @@ import (
 )
 
 var screen *Screen
+var stuff *Stuff
 var paddle *Paddle
 var ball *Ball
 
@@ -15,6 +16,7 @@ func main() {
 
 func run() {
 	InitScreen()
+	InitStuff()
 	InitBall()
 	InitPaddle()
 
