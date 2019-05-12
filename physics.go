@@ -54,9 +54,11 @@ func InitPhysics() {
 func (c *Physics) Step() {
 	now := timeutil.TimestampNow().Float64()
 
-	if c.Last == 0 {
-		c.Last = now
+	if c.Last != 0 {
+		c.Space.Step(floater(now - c.Last))
 	}
 
-	c.Space.Step(floater(now - c.Last))
+	c.Last = now
+
+	poop(c.Space)
 }
