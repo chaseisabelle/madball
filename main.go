@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/faiface/pixel/pixelgl"
 )
 
 var screen *Screen
-var stuff *Stuff
+var physics *Physics
 var paddle *Paddle
 var ball *Ball
 
@@ -16,7 +15,7 @@ func main() {
 
 func run() {
 	InitScreen()
-	InitStuff()
+	InitPhysics()
 	InitBall()
 	InitPaddle()
 
@@ -29,17 +28,13 @@ func run() {
 		paddle.Clear()
 		ball.Clear()
 
+		physics.Step()
+
 		paddle.Move()
 		ball.Move()
 
 		paddle.Draw()
 		ball.Draw()
 		screen.Draw()
-	}
-}
-
-func dbg(bla ...interface{}) {
-	for _, v := range bla {
-		fmt.Printf("%+v\n", v)
 	}
 }

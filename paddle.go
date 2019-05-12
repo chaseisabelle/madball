@@ -17,10 +17,10 @@ type Paddle struct {
 
 func InitPaddle() {
 	width, height := screen.Window.Monitor().Size()
-	min := pixel.V(0, 0)
-	max := pixel.V(width / 5, height / 20)
-	rectangle := pixel.R(min.X, min.Y, max.X, max.Y).Moved(min.Add(pixel.V(0, height / 40)))
-	velocity := pixel.V(0, 0)
+	min := pixvec(0, 0)
+	max := pixvec(width / 5, height / 20)
+	rectangle := pixel.R(min.X, min.Y, max.X, max.Y).Moved(min.Add(pixvec(0, height / 40)))
+	velocity := pixvec(0, 0)
 	drawer := imdraw.New(nil)
 
 	paddle = &Paddle{
@@ -47,7 +47,7 @@ func (p *Paddle) Clear() {
 func (p *Paddle) Move() {
 	// move to a new center based on mouse center
 	origin := p.Rectangle.Center()
-	center := pixel.V(screen.Window.MousePosition().X, origin.Y)
+	center := pixvec(screen.Window.MousePosition().X, origin.Y)
 
 	// make sure it stays inside the screen
 	halfW := p.Rectangle.W() / 2

@@ -1,15 +1,17 @@
 package main
 
 import (
+	"github.com/levenlabs/golib/timeutil"
 	"github.com/vova616/chipmunk"
 	"github.com/vova616/chipmunk/vect"
 )
 
-type Stuff struct {
+type Physics struct {
 	Space *chipmunk.Space
+	Last float64
 }
 
-func InitStuff() {
+func InitPhysics() {
 	space := chipmunk.NewSpace()
 
 	space.Gravity = vect.Vect{
@@ -44,7 +46,17 @@ func InitStuff() {
 
 	space.AddBody(body)
 
-	stuff = &Stuff{
+	physics = &Physics{
 		Space: space,
 	}
+}
+
+func (c *Physics) Step() {
+	now := timeutil.TimestampNow().Float64()
+
+	if c.Last == 0 {
+		c.Last = now
+	}
+
+	c.Space.Step(floater(now - c.Last))
 }
